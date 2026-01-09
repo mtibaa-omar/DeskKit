@@ -1,0 +1,108 @@
+import { supabase } from "../supabase";
+
+export const authAPI = {
+  signUp: async (email, password, userData = {}) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: userData },
+    });
+    if (error) throw new Error(error.message);
+
+    if (
+      data?.user &&
+      (!data.user.identities || data.user.identities.length === 0)
+    ) {
+      throw new Error("User already registered");
+    }
+
+    if (data?.user && !data.session) {
+      const { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+      if (signInError) throw new Error(signInError.message);
+      return signInData;
+    }
+
+    return data;
+  },
+
+  signIn: async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw new Error(error.message);
+    return data;
+  },
+
+  signInWithGoogle: async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/`,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
+    if (error) throw new Error(error.message);
+    return data;
+  },
+
+  signOut: async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw new Error(error.message);
+  },
+
+  getSession: async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw new Error(error.message);
+    return data.session;
+  },
+
+  getUser: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) throw new Error(error.message);
+    return data.user;
+  },
+
+  updateCurrentUser: async ({ fullName, password, avatar }) => {
+    //1. update password or fullNmae
+    let updateUser;
+    if (fullName) updateUser = { data: { fullName } };
+    if (password) updateUser = { password };
+
+    const { data, error } = await supabase.auth.updateUser(updateUser);
+    if (error) throw new Error(error.message);
+    if (!avatar) return data;
+
+    //2. Upload avatar image
+    const fileName = `avatar-${data.user.id}-${Math.random()}`;
+
+    const { error: errorStorage } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, avatar);
+
+    if (errorStorage) {
+      console.error(errorStorage);
+      throw new Error(errorStorage.message);
+    }
+
+    //3. Update file name
+    const { data: updatedUser, error: error2 } = await supabase.auth.updateUser({
+      data: {
+        avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
+      },
+    });
+    if (error2) {
+      console.error(error2);
+      throw new Error(error2.message);
+    }
+    return updatedUser;
+  }
+
+};
