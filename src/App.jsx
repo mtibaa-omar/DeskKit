@@ -9,6 +9,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles/index.css";
 import ProfilePage from "./pages/ProfilePage";
+import TasksPage from "./pages/TasksPage";
+import NotesPage from "./pages/NotesPage";
+import CalendarPage from "./pages/CalendarPage";
+import PomodoroPage from "./pages/PomodoroPage";
+import WhiteboardPage from "./pages/WhiteboardPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +46,13 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index element={<Home />} />
             <Route path="account" element={<ProfilePage />} />
+            <Route path="workspace">
+              <Route path="pomodoro" element={<ProtectedRoute><PomodoroPage /></ProtectedRoute>} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="notes" element={<NotesPage />} />
+              <Route path="calendar" element={<CalendarPage />} />
+              <Route path="whiteboard" element={<WhiteboardPage />} />
+            </Route>
             <Route path="*" element={<PageNotFound />} />
           </Route>
           <Route path="signup" element={<SignupPage />} />

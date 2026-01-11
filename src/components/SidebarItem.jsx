@@ -20,7 +20,6 @@ export function SidebarItem({ item, isCollapsed, onClick }) {
           }
         `}
       >
-        {/* Icon container */}
         <div
           className={`
             flex items-center justify-center rounded-xl transition-all duration-300 ease-out
@@ -42,7 +41,6 @@ export function SidebarItem({ item, isCollapsed, onClick }) {
           />
         </div>
 
-        {/* Label */}
         {!isCollapsed && (
           <span
             className={`
@@ -57,12 +55,9 @@ export function SidebarItem({ item, isCollapsed, onClick }) {
           </span>
         )}
 
-        {/* Active indicator - glowing dot */}
         {active && isCollapsed && (
           <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-500 rounded-full shadow-lg shadow-blue-500/50 animate-pulse" />
         )}
-
-        {/* Subtle glow effect for active state */}
         {active && (
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-xl -z-10" />
         )}

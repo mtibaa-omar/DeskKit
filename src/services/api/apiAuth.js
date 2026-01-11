@@ -58,16 +58,14 @@ export const authAPI = {
     if (error) throw new Error(error.message);
   },
 
-  getSession: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (error) throw new Error(error.message);
-    return data.session;
-  },
-
   getUser: async () => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) return null;
+
     const { data, error } = await supabase.auth.getUser();
+
     if (error) throw new Error(error.message);
-    return data.user;
+    return data?.user;
   },
 
   updateCurrentUser: async ({ fullName, password, avatar }) => {

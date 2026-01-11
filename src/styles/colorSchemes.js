@@ -39,6 +39,7 @@ export const COLOR_SCHEMES = {
     bgLight: "bg-emerald-50",
     hoverBg: "hover:bg-emerald-100",
     focusBorder: "focus:border-emerald-500",
+    icon: "oklch(69.6% 0.17 162.48)",
   },
   red: {
     bg: "bg-red-100",
@@ -49,6 +50,7 @@ export const COLOR_SCHEMES = {
     bgLight: "bg-red-50",
     hoverBg: "hover:bg-red-100",
     focusBorder: "focus:border-red-500",
+    icon: "oklch(57.7% 0.245 27.325)"
   },
   orange: {
     bg: "bg-orange-100",
@@ -59,6 +61,7 @@ export const COLOR_SCHEMES = {
     bgLight: "bg-orange-50",
     hoverBg: "hover:bg-orange-100",
     focusBorder: "focus:border-orange-500",
+    icon: "oklch(75% 0.183 55.934)"
   },
   amber: {
     bg: "bg-amber-100",
@@ -69,6 +72,7 @@ export const COLOR_SCHEMES = {
     bgLight: "bg-amber-50",
     hoverBg: "hover:bg-amber-100",
     focusBorder: "focus:border-amber-500",
+    icon: "oklch(66.6% 0.179 58.318)"
   },
   yellow: {
     bg: "bg-yellow-100",
@@ -79,6 +83,7 @@ export const COLOR_SCHEMES = {
     bgLight: "bg-yellow-50",
     hoverBg: "hover:bg-yellow-100",
     focusBorder: "focus:border-yellow-500",
+    icon: "oklch(79.5 % 0.184 86.047)"
   },
   gray: {
     bg: "bg-gray-100",
