@@ -1,7 +1,13 @@
-import { Coffee, Flower2, Flame } from "lucide-react";
+import { Coffee, Flower2, Flame, Clock } from "lucide-react";
 import ButtonIcon from "../../components/ButtonIcon";
 
 const timerTypes = [
+  {
+    id: "simple",
+    name: "Simple",
+    icon: Clock,
+    focusColor: "gray",
+  },
   {
     id: "coffee",
     name: "Coffee Cup",

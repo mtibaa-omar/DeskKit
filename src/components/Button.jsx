@@ -2,23 +2,32 @@ import { forwardRef } from "react";
 import SpinnerMini from "./SpinnerMini";
 
 const variants = {
-  primary: "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 shadow-sm",
-  secondary: "bg-white/40 text-gray-700 hover:bg-gray-100 disabled:bg-gray-100 border-2 border-gray-300",
-  danger: "bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50",
-  ghost: "text-gray-600 hover:bg-gray-100 disabled:opacity-50",
+  primary:
+    "bg-zinc-900 text-white hover:bg-zinc-800 disabled:bg-zinc-300 shadow-sm active:scale-95 transition-all text-zinc-50",
+  secondary:
+    "bg-white/40 text-zinc-700 hover:bg-zinc-50 disabled:bg-zinc-100 border border-zinc-200 backdrop-blur-sm",
+  danger:
+    "bg-red-50/50 text-red-600 hover:bg-red-50 disabled:opacity-50 border border-red-100",
+  ghost: "text-zinc-600 hover:bg-zinc-50 disabled:opacity-50",
   "ghost-danger": "text-red-600 hover:bg-red-50 disabled:opacity-50",
-  success: "bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-gray-400 shadow-sm",
-  outline: "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 disabled:opacity-50",
-  "outline-danger": "border-2 border-red-600 text-red-600 hover:bg-red-50 disabled:opacity-50",
-  "outline-secondary": "border-2 border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 duration-300 hover:scale-105 border-2 border-gray-300 hover:border-blue-500 hover:bg-white transition-all duration-300 ",
-  "outline-success": "border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 disabled:opacity-50",
-  gradient: "group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
+  success:
+    "bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-zinc-300 shadow-sm",
+  outline:
+    "border border-zinc-200 text-zinc-600 hover:bg-zinc-50 disabled:opacity-50",
+  "outline-danger":
+    "border border-red-200 text-red-600 hover:bg-red-50 disabled:opacity-50",
+  "outline-secondary":
+    "border border-zinc-200 text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 transition-all duration-300 hover:border-zinc-400 hover:bg-white",
+  "outline-success":
+    "border border-emerald-200 text-emerald-600 hover:bg-emerald-50 disabled:opacity-50",
+  gradient:
+    "group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-zinc-800 to-zinc-900 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-95",
 };
 
 const sizes = {
-  sm: "px-3 py-1.5 text-sm gap-1.5",
+  sm: "px-3 py-1.5 text-xs gap-1.5",
   md: "px-4 py-2 text-sm gap-2",
-  lg: "px-4 py-3 gap-2",
+  lg: "px-6 py-3.5 text-base gap-2.5",
 };
 
 export const Button = forwardRef(function Button(
@@ -56,7 +65,8 @@ export const Button = forwardRef(function Button(
     >
       {isLoading ? (
         <>
-          <SpinnerMini size="md" color="current" />
+          <SpinnerMini size={size} />
+          {children}
         </>
       ) : (
         <>

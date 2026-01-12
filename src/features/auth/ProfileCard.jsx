@@ -34,12 +34,13 @@ export default function ProfileCard({ type = "loading", user }) {
             className="w-12 h-12 rounded-full object-cover shadow-md"
           />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20">
-            <GraduationCap className="w-6 h-6 text-white" />
-          </div>
+          <img
+            src="/default-user.jpg"
+            className="w-12 h-12 rounded-full object-cover shadow-md"
+          />
         )}
         <div className="flex-1 min-w-0">
-          <p className="text-base font-bold text-gray-900 truncate">
+          <p className="text-base font-bold text-gray-500 truncate">
             {user?.user_metadata?.fullName ||
               user?.user_metadata?.full_name ||
               user.email?.split("@")[0] ||

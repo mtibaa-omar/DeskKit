@@ -1,62 +1,96 @@
-import { Play, Pause, Square, RotateCcw, SkipForward } from "lucide-react";
+import { Play, Pause, Square } from "lucide-react";
 import Button from "../../components/Button";
 
 export function TimerControls({
-  isRunning,
-  isPaused,
-  phase,
+  run,
   onStart,
   onPause,
   onResume,
   onStop,
-  onReset,
-  onSkipBreak,
+  isStarting,
+  isPausing,
+  isResuming,
+  isStopping,
 }) {
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-      {isRunning ? (
-        <Button variant="primary" size="lg" icon={Pause} onClick={onPause}>
+  const status = run?.status;
+  const phase = run?.phase || "focus";
+
+  if (!run || status === "stopped") {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+        <Button
+          variant="primary"
+          size="lg"
+          icon={Play}
+          onClick={onStart}
+          isLoading={isStarting}
+          className="rounded-full shadow-lg shadow-zinc-200"
+        >
+          Start Focus
+        </Button>
+      </div>
+    );
+  }
+
+  if (status === "running") {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+        <Button
+          variant="secondary"
+          size="lg"
+          icon={Pause}
+          onClick={onPause}
+          isLoading={isPausing}
+          disabled={isStopping}
+          className="rounded-full"
+        >
           Pause
         </Button>
-      ) : isPaused ? (
-        <Button variant="primary" size="lg" icon={Play} onClick={onResume}>
-          Resume
-        </Button>
-      ) : (
-        <Button variant="primary" size="lg" icon={Play} onClick={onStart}>
-          {phase === "focus" ? "Start Focus" : "Start Break"}
-        </Button>
-      )}
-
-      {isRunning && (
-        <Button variant="danger" size="lg" icon={Square} onClick={onStop}>
+        <Button
+          variant="danger"
+          size="lg"
+          icon={Square}
+          onClick={onStop}
+          isLoading={isStopping}
+          disabled={isPausing}
+          className="rounded-full"
+        >
           Stop
         </Button>
-      )}
+      </div>
+    );
+  }
 
-      {(isPaused || (!isRunning && !isPaused)) && (
+  if (status === "paused") {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
         <Button
-          variant="secondary"
+          variant="primary"
           size="lg"
-          icon={RotateCcw}
-          onClick={onReset}
+          icon={Play}
+          onClick={onResume}
+          isLoading={isResuming}
+          disabled={isStopping}
+          className="rounded-full shadow-lg shadow-zinc-200"
         >
-          Reset
+          Resume {phase === "focus" ? "Focus" : "Break"}
         </Button>
-      )}
+        <Button
+          variant="danger"
+          size="lg"
+          icon={Square}
+          onClick={onStop}
+          isLoading={isStopping}
+          disabled={isResuming}
+          className="rounded-full"
+        >
+          Stop
+        </Button>
+      </div>
+    );
+  }
 
-      {phase === "break" && (
-        <Button
-          variant="secondary"
-          size="lg"
-          icon={SkipForward}
-          onClick={onSkipBreak}
-        >
-          Skip Break
-        </Button>
-      )}
-    </div>
-  );
+  return null;
 }
 
 export default TimerControls;

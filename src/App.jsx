@@ -47,8 +47,22 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path="account" element={<ProfilePage />} />
             <Route path="workspace">
-              <Route path="pomodoro" element={<ProtectedRoute><PomodoroPage /></ProtectedRoute>} />
-              <Route path="tasks" element={<TasksPage />} />
+              <Route
+                path="pomodoro"
+                element={
+                  <ProtectedRoute>
+                    <PomodoroPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="tasks"
+                element={
+                  <ProtectedRoute>
+                    <TasksPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="notes" element={<NotesPage />} />
               <Route path="calendar" element={<CalendarPage />} />
               <Route path="whiteboard" element={<WhiteboardPage />} />
