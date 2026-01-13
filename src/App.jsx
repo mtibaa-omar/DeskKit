@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import SignupPage from "./pages/SignupPage";
 import AppLayout from "./components/AppLayout";
 import LoginPage from "./pages/LoginPage";
+import ConfirmEmailPage from "./pages/ConfirmEmailPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "./styles/index.css";
@@ -71,6 +72,7 @@ export default function App() {
           </Route>
           <Route path="signup" element={<SignupPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="confirm-email" element={<ConfirmEmailPage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

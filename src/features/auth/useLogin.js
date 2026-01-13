@@ -27,22 +27,17 @@ export function useLogin() {
 }
 
 export function useLoginWithGoogle() {
-    const queryClient = useQueryClient();
-    const navigate = useNavigate();
+  const {
+    isPending: isLoading,
+    isFetching,
+    mutate: loginWithGoogle,
+  } = useMutation({
+    mutationFn: authAPI.signInWithGoogle,
+    onError: (err) => {
+      const message = err.message || "Google login failed";
+      toast.error(message);
+    },
+  });
 
-    const { isPending: isLoading, isFetching, mutate: loginWithGoogle } = useMutation({
-        mutationFn: authAPI.signInWithGoogle,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: authKeys.user });
-            queryClient.invalidateQueries({ queryKey: authKeys.session });
-            toast.success("Login successful!");
-            navigate("/", { replace: true });
-        },
-        onError: (err) => {
-            const message = err.message || "Google login failed";
-            toast.error(message);
-        },
-    });
-
-    return { isLoading, isFetching, loginWithGoogle };
+  return { isLoading, isFetching, loginWithGoogle };
 }

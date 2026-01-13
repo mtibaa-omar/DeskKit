@@ -1,4 +1,4 @@
-import { supabase } from "../supabase";
+import { supabase, supabaseUrl } from "../supabase";
 
 export const authAPI = {
   signUp: async (email, password, userData = {}) => {
@@ -14,16 +14,6 @@ export const authAPI = {
       (!data.user.identities || data.user.identities.length === 0)
     ) {
       throw new Error("User already registered");
-    }
-
-    if (data?.user && !data.session) {
-      const { data: signInData, error: signInError } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-      if (signInError) throw new Error(signInError.message);
-      return signInData;
     }
 
     return data;
@@ -101,6 +91,24 @@ export const authAPI = {
       throw new Error(error2.message);
     }
     return updatedUser;
+  },
+
+  verifyOtp: async (email, token) => {
+    const { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "signup",
+    });
+    if (error) throw new Error(error.message);
+    return data;
+  },
+
+  resendOtp: async (email) => {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+    });
+    if (error) throw new Error(error.message);
   }
 
 };

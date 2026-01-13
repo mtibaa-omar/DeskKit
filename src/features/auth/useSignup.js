@@ -11,11 +11,15 @@ export function useSignup() {
     const { isPending: isLoading, mutate: signup } = useMutation({
         mutationFn: ({ email, password, userData }) =>
             authAPI.signUp(email, password, userData),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: authKeys.user });
-            queryClient.invalidateQueries({ queryKey: authKeys.session });
-            toast.success("Account created successfully!");
-            navigate("/", { replace: true });
+        onSuccess: (data, variables) => {
+            if (data?.session) {
+                queryClient.invalidateQueries({ queryKey: authKeys.user });
+                queryClient.invalidateQueries({ queryKey: authKeys.session });
+                toast.success("Account created successfully!");
+                navigate("/", { replace: true });
+            } else {
+                navigate("/confirm-email", { state: { email: variables.email } });
+            }
         },
         onError: (err) => {
             const message = err.message || "Error during registration";

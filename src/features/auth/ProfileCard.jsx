@@ -15,7 +15,7 @@ export default function ProfileCard({ type = "loading", user }) {
       </div>
     );
   }
-  const avatarUrl = user?.user_metadata?.avatar_url;
+  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.avatar;
 
   return (
     <div className="p-5 border-t border-white/10 shrink-0">
