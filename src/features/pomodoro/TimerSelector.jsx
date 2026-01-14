@@ -1,5 +1,5 @@
 import { Coffee, Flower2, Flame, Clock } from "lucide-react";
-import ButtonIcon from "../../components/ButtonIcon";
+import TimerSelectorButton from "../../components/TimerSelectorButton";
 
 const timerTypes = [
   {
@@ -37,7 +37,7 @@ export function TimerSelector({
     <div className="flex items-center gap-2">
       {timerTypes.map((timer) => {
         return (
-          <ButtonIcon
+          <TimerSelectorButton
             id={timer.id}
             name={timer.name}
             icon={timer.icon}

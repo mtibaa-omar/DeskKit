@@ -1,52 +1,62 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { getColorScheme } from "../styles/colorSchemes";
-import { LoaderCircle } from "lucide-react";
-export default function ButtonIcon({
-  id,
-  name,
-  icon: Icon,
-  onSelectTimer,
-  disabled = false,
-  colorTheme,
-  selectedTimer,
-}) {
-  const isSelected = selectedTimer === id;
-  const colors = getColorScheme(colorTheme);
+import { forwardRef } from "react";
+import SpinnerMini from "./SpinnerMini";
+
+const variants = {
+  primary: "bg-zinc-900 text-white hover:bg-zinc-800 disabled:bg-zinc-300 shadow-sm active:scale-95",
+  secondary: "bg-white text-zinc-700 hover:bg-zinc-50 disabled:bg-zinc-100 border border-zinc-200 shadow-sm",
+  danger: "bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50 border border-red-100",
+  ghost: "text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 disabled:opacity-50",
+  "ghost-danger": "text-red-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-50",
+};
+
+const sizes = {
+  sm: "p-1.5",
+  md: "p-2",
+  lg: "p-2.5",
+};
+
+const iconSizes = {
+  sm: "w-4 h-4",
+  md: "w-5 h-5",
+  lg: "w-6 h-6",
+};
+
+const ButtonIcon = forwardRef(function ButtonIcon(
+  {
+    icon: Icon,
+    variant = "primary",
+    size = "md",
+    isLoading = false,
+    disabled,
+    className = "",
+    type = "button",
+    ...props
+  },
+  ref
+) {
+  const isDisabled = disabled || isLoading;
 
   return (
-    <motion.button
-      key={id}
-      onClick={() => !disabled && onSelectTimer(id)}
-      disabled={disabled}
-      className={`relative p-3.5 rounded-2xl transition-all duration-300
-                ${
-                  isSelected
-                    ? "bg-white/90 backdrop-blur-xl shadow-xl border-2 border-white/60"
-                    : "bg-white/40 backdrop-blur-md hover:bg-white/60 border-2 border-white/30 hover:border-white/50"
-                }
-                ${
-                  disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                }`}
-      whileHover={!disabled ? { scale: 1.08, y: -2 } : {}}
-      whileTap={!disabled ? { scale: 0.96 } : {}}
-      title={name}
+    <button
+      ref={ref}
+      type={type}
+      disabled={isDisabled}
+      className={`
+        flex items-center justify-center rounded-lg transition-all duration-200
+        disabled:cursor-not-allowed
+        ${variants[variant]}
+        ${sizes[size]}
+        ${className}
+      `}
+      {...props}
     >
-      <Icon
-        className={`w-5 h-5 transition-transform duration-200 ${
-          isSelected ? "scale-110" : ""
-        }`}
-        color={colors.icon}
-      />
-      {isSelected && (
-        <motion.div
-          layoutId="timerSelector"
-          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
-          style={{ backgroundColor: colors.icon }}
-          initial={false}
-          transition={{ type: "spring", stiffness: 500, damping: 30 }}
-        />
+      {isLoading ? (
+        <SpinnerMini size={size} />
+      ) : (
+        <Icon className={`${iconSizes[size]}`} />
       )}
-    </motion.button>
+    </button>
   );
-}
+});
+
+export default ButtonIcon;

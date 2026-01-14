@@ -64,7 +64,14 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="notes" element={<NotesPage />} />
+              <Route
+                path="notes"
+                element={
+                  <ProtectedRoute>
+                    <NotesPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="calendar" element={<CalendarPage />} />
               <Route path="whiteboard" element={<WhiteboardPage />} />
             </Route>

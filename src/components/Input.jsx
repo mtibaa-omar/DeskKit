@@ -10,6 +10,7 @@ const Input = forwardRef(function Input(
     error,
     hint,
     className = "",
+    inputClassName = "",
     disabled = false,
     ...props
   },
@@ -26,7 +27,7 @@ const Input = forwardRef(function Input(
 
       <div className="relative">
         {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />}
-        <input ref={ref} id={id} type={type} placeholder={placeholder} disabled={disabled} className={`${baseInputStyles} ${iconPadding} ${errorStyles} ${disabledStyles}`} {...props} />
+        <input ref={ref} id={id} type={type} placeholder={placeholder} disabled={disabled} className={`${baseInputStyles} ${iconPadding} ${errorStyles} ${disabledStyles} ${inputClassName}`} {...props} />
       </div>
 
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
