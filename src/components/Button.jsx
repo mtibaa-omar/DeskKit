@@ -3,7 +3,7 @@ import SpinnerMini from "./SpinnerMini";
 
 const variants = {
   primary:
-    "bg-zinc-900 text-white hover:bg-zinc-800 disabled:bg-zinc-300 shadow-sm active:scale-95 transition-all text-zinc-50",
+    "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300 shadow-sm active:scale-95 transition-all",
   secondary:
     "bg-white/40 text-zinc-700 hover:bg-zinc-50 disabled:bg-zinc-100 border border-zinc-200 backdrop-blur-sm",
   danger:

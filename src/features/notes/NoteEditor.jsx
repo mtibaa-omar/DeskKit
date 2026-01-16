@@ -92,10 +92,15 @@ export default function NoteEditor({ userId, noteId }) {
 
   if (!noteId) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-gray-400">
-        <FileText className="w-16 h-16 mb-4 text-gray-200" />
-        <p className="text-lg font-medium">Select a note to edit</p>
-        <p className="text-sm mt-1">or create a new one from the sidebar</p>
+      <div className="h-full flex flex-col items-center justify-center p-6">
+        <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-sm border border-gray-100 mb-6">
+          <FileText className="w-12 h-12 text-gray-300" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-600 mb-2">Select a note</h3>
+        <p className="text-gray-500 text-center max-w-xs">
+          Choose a note from the sidebar to start editing, or create a new one
+          in any folder.
+        </p>
       </div>
     );
   }
@@ -124,7 +129,7 @@ export default function NoteEditor({ userId, noteId }) {
         </h1>
         <div className="flex items-center gap-2">
           {hasChanges && (
-            <span className="text-xs text-blue-600 font-medium px-2.5 py-1 rounded-full bg-blue-50">
+            <span className="text-xs text-amber-600 font-semibold px-2.5 py-1 rounded-full bg-amber-50 border border-amber-100">
               Unsaved changes
             </span>
           )}
@@ -170,7 +175,7 @@ export default function NoteEditor({ userId, noteId }) {
               onChange={handleTaskLink}
               options={taskOptions}
               size="sm"
-              className="w-48"
+              className="w-52 !py-2 !rounded-lg text-sm"
             />
           </div> 
       </div>

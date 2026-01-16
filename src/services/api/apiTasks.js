@@ -106,6 +106,19 @@ export const tasksAPI = {
     return data || [];
   },
 
+  getTasksByRange: async (userId, start, end) => {
+    const { data, error } = await supabase
+      .from("tasks")
+      .select("*, category:task_categories(id, name)")
+      .eq("user_id", userId)
+      .gte("planned_start", start)
+      .lt("planned_start", end)
+      .order("planned_start", { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return data || [];
+  },
+
   getTaskById: async (id, userId) => {
     const { data, error } = await supabase
       .from("tasks")

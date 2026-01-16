@@ -1,21 +1,26 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Suspense, lazy } from "react";
+import "./styles/index.css";
+
+import AppLayout from "./components/AppLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import PageNotFound from "./components/PageNotFound";
 import Home from "./pages/Home";
 import SignupPage from "./pages/SignupPage";
-import AppLayout from "./components/AppLayout";
 import LoginPage from "./pages/LoginPage";
 import ConfirmEmailPage from "./pages/ConfirmEmailPage";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import "./styles/index.css";
 import ProfilePage from "./pages/ProfilePage";
-import TasksPage from "./pages/TasksPage";
-import NotesPage from "./pages/NotesPage";
-import CalendarPage from "./pages/CalendarPage";
 import PomodoroPage from "./pages/PomodoroPage";
-import WhiteboardPage from "./pages/WhiteboardPage";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Spinner from "./components/Spinner";
+
+const TasksPage = lazy(() => import("./pages/TasksPage"));
+const NotesPage = lazy(() => import("./pages/NotesPage"));
+const CalendarPage = lazy(() => import("./pages/CalendarPage"));
+const WhiteboardsPage = lazy(() => import("./pages/WhiteboardsPage"));
+const WhiteboardEditorPage = lazy(() => import("./pages/WhiteboardEditorPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +30,14 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Spinner />
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -43,6 +56,7 @@ export default function App() {
           pauseOnHover
           theme="light"
         />
+        <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route index element={<Home />} />
@@ -52,7 +66,8 @@ export default function App() {
               <Route path="tasks" element={<TasksPage />} />
               <Route path="notes" element={<NotesPage />} />
               <Route path="calendar" element={<CalendarPage />} />
-              <Route path="whiteboard" element={<WhiteboardPage />} />
+              <Route path="whiteboard" element={<WhiteboardsPage />} />
+              <Route path="whiteboard/:id" element={<WhiteboardEditorPage />} />
             </Route>
             <Route path="*" element={<PageNotFound />} />
           </Route>
@@ -60,6 +75,7 @@ export default function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="confirm-email" element={<ConfirmEmailPage />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </QueryClientProvider>
   );

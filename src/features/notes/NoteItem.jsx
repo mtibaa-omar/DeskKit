@@ -33,36 +33,46 @@ export default function NoteItem({
   return (
     <div
       onClick={() => onSelect(note.id)}
-      className={`group flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
+      className={`group flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-all border ${
         isSelected
-          ? "bg-blue-50 text-blue-700"
-          : "hover:bg-gray-100 text-gray-600"
+          ? "bg-blue-50 text-blue-700 border-blue-200 shadow-sm"
+          : "hover:bg-gray-50 text-gray-600 border-transparent hover:border-gray-200"
       }`}
     >
-      <FileText className="w-4 h-4 text-gray-400 shrink-0" />
+      <div className={`flex-shrink-0 transition-colors ${
+          isSelected ? "text-blue-500" : "text-gray-300"
+        }`}>
+        <FileText className="w-4 h-4" />
+      </div>
 
-      <span className="flex-1 text-sm truncate">{note.title}</span>
+      <span
+        className={`flex-1 text-sm truncate font-medium ${
+          isSelected ? "text-blue-700" : ""
+        }`}
+      >
+        {note.title}
+      </span>
 
-      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-0.5 transition-opacity">
+      <div className="flex items-center gap-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onStartEdit(note.id, note.title);
           }}
-          className="p-1 hover:bg-gray-200 rounded transition-colors"
+          className="p-1.5 hover:bg-gray-100 rounded-md transition-colors group/btn"
           title="Rename"
         >
-          <Pencil className="w-3 h-3 text-gray-500" />
+          <Pencil className="w-3 h-3 text-gray-400 group-hover/btn:text-gray-600" />
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onDelete(note.id, note.folder_id);
           }}
-          className="p-1 hover:bg-red-100 rounded transition-colors"
+          className="p-1.5 hover:bg-red-100 rounded-md transition-colors group/btn"
           title="Delete"
         >
-          <Trash2 className="w-3 h-3 text-red-500" />
+          <Trash2 className="w-3 h-3 text-gray-400 group-hover/btn:text-red-600" />
         </button>
       </div>
     </div>

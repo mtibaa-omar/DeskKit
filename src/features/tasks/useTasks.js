@@ -75,3 +75,11 @@ export function useDeleteTask(userId) {
     },
   });
 }
+
+export function useTasksByRange(userId, start, end) {
+  return useQuery({
+    queryKey: taskKeys.range(userId, start, end),
+    queryFn: () => tasksAPI.getTasksByRange(userId, start, end),
+    enabled: !!userId && !!start && !!end,
+  });
+}

@@ -3,11 +3,14 @@ import {
   Plus,
   Search,
   ListTodo,
-  Calendar,
   Tag,
-  FunnelX,
   ChevronDown,
   ChevronRight,
+  X,
+  CheckCircle,
+  Clock,
+  CalendarClock,
+  CalendarOff,
 } from "lucide-react";
 import { useUser } from "../features/auth/useUser";
 import { useTasks } from "../features/tasks/useTasks";
@@ -17,7 +20,6 @@ import TaskCard from "../features/tasks/TaskCard";
 import TaskFormModal from "../features/tasks/TaskFormModal";
 import CategoryManagerModal from "../features/tasks/CategoryManagerModal";
 import Button from "../components/Button";
-import ButtonIcon from "../components/ButtonIcon";
 import Input from "../components/Input";
 import Select from "../components/Select";
 import { COLOR_SCHEMES } from "../styles/colorSchemes";
@@ -133,14 +135,16 @@ export default function TasksPage() {
   };
 
   const hasActiveFilters = statusFilter || categoryFilter || searchQuery;
-
+  const activeFiltersCount = [statusFilter, categoryFilter, searchQuery].filter(
+    Boolean
+  ).length;
   const clearAllFilters = () => {
     setStatusFilter("");
     setCategoryFilter("");
     setSearchQuery("");
   };
 
-  const renderTaskGroup = (title, tasks, iconColor, isCollapsible = false, isExpanded = true, onToggle = null) => {
+  const renderTaskGroup = (title, tasks, Icon, iconColor, isCollapsible = false, isExpanded = true, onToggle = null) => {
     if (tasks.length === 0) return null;
 
     return (
@@ -151,20 +155,36 @@ export default function TasksPage() {
           }`}
           onClick={isCollapsible ? onToggle : undefined}
         >
+          <div
+            className={`flex items-center justify-center w-9 h-9 rounded-xl transition-transform duration-200 ${COLOR_SCHEMES[iconColor].bg}${
+              isCollapsible ? "group-hover/header:scale-105" : ""
+            }`}
+          >
+            <Icon className={`w-4.5 h-4.5 ${COLOR_SCHEMES[iconColor].text}`} />
+          </div>
+          <div className="flex items-center gap-2.5 flex-1">
+            <h2 className="text-lg font-bold text-gray-800 tracking-tight">
+              {title}
+            </h2>
+            <span
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold ${COLOR_SCHEMES[iconColor].lightBg} ${COLOR_SCHEMES[iconColor].text}`}
+            >
+              {tasks.length}
+            </span>
+          </div>
           {isCollapsible && (
-            isExpanded ? (
-              <ChevronDown className="w-5 h-5 text-gray-400" />
-            ) : (
-              <ChevronRight className="w-5 h-5 text-gray-400" />
-            )
+            <div
+              className={`p-1.5 rounded-lg transition-colors ${
+                isExpanded ? "bg-gray-100" : "hover:bg-gray-100"
+              }`}
+            >
+              {isExpanded ? (
+                <ChevronDown className="w-4 h-4 text-gray-500" />
+              ) : (
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              )}
+            </div>
           )}
-          {!isCollapsible && (
-            <div className={`w-1 h-6 rounded-full ${COLOR_SCHEMES[iconColor].bgDark}`} />
-          )}
-          <h2 className="text-lg font-bold text-gray-800 tracking-tight">{title}</h2>
-          <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${COLOR_SCHEMES[iconColor].bg} ${COLOR_SCHEMES[iconColor].text}`}>
-            {tasks.length}
-          </span>
         </div>
         {isExpanded && (
           <div className="grid gap-3">
@@ -193,8 +213,8 @@ export default function TasksPage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Tasks</h1>
-            <p className="text-gray-500 mt-1 font-medium">
-              See what needs to be done
+            <p className="text-gray-500 font-medium pl-1">
+              Manage and track your work efficiently
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -219,44 +239,47 @@ export default function TasksPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-8 transition-all hover:shadow-md">
-          <div className="flex flex-col md:flex-row gap-4">
-            <Input
-              type="text"
-              placeholder="Search tasks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              icon={Search}
-              className="flex-1"
-            />
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm p-5 mb-8 transition-all hover:shadow-md">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1">
+              <Input
+                type="text"
+                placeholder="Search tasks by name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                icon={Search}
+                className="w-full"
+                inputClassName="!py-2.5 !border-gray-200 focus:!border-blue-400 !rounded-xl bg-gray-50/50 focus:bg-white"
+              />
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-[380px] shrink-0">
-              <div className="flex-1">
-                  <Select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    options={STATUS_OPTIONS}
-                    className="w-full border-gray-200 bg-gray-50 focus:bg-white hover:bg-gray-100 transition-colors"
-                  />
+            <div className="flex flex-col sm:flex-row gap-3 lg:w-auto">
+              <div className="relative">
+                <Select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  options={STATUS_OPTIONS}
+                  className="w-full sm:w-40 !py-2.5 !border-gray-200 !rounded-xl bg-gray-50/50 hover:bg-white focus:bg-white transition-colors"
+                />
               </div>
-             <div className="flex-1">
-                 <Select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    options={categoryOptions}
-                    className="w-full border-gray-200 bg-gray-50 focus:bg-white hover:bg-gray-100 transition-colors"
-                  />
-             </div>
+              <div className="relative">
+                <Select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  options={categoryOptions}
+                  className="w-full sm:w-44 !py-2.5 !border-gray-200 !rounded-xl bg-gray-50/50 hover:bg-white focus:bg-white transition-colors"
+                />
+              </div>
             </div>
 
             {hasActiveFilters && (
-              <ButtonIcon
-                icon={FunnelX}
+              <button
                 onClick={clearAllFilters}
-                variant="ghost-danger"
-                size="lg"
-                title="Clear all filters"
-              />
+                className="flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors border border-red-100"
+              >
+                <X className="w-4 h-4" />
+                <span>Clear ({activeFiltersCount})</span>
+              </button>
             )}
           </div>
         </div>
@@ -289,11 +312,13 @@ export default function TasksPage() {
             {renderTaskGroup(
               "Current",
               groupedTasks.current,
+              Clock,
               "blue"
             )}
             {renderTaskGroup(
               "Upcoming",
               groupedTasks.upcoming,
+              CalendarClock,
               "emerald",
               true,
               isUpcomingExpanded,
@@ -302,6 +327,7 @@ export default function TasksPage() {
             {renderTaskGroup(
               "No Date",
               groupedTasks.noDate,
+              CalendarOff,
               "gray",
               true,
               isNoDateExpanded,
@@ -310,6 +336,7 @@ export default function TasksPage() {
             {renderTaskGroup(
               "Done",
               groupedTasks.done,
+              CheckCircle,
               "emerald",
               true,
               isDoneExpanded,

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../features/auth/useUser";
-import SpinnerMini from "./SpinnerMini";
+import Spinner from "./Spinner";
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
@@ -14,12 +14,6 @@ function ProtectedRoute({ children }) {
     [isAuthenticated, isLoading, navigate]
   );
 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <SpinnerMini />
-      </div>
-    );
 
   if (data === null) navigate("/login");
   if (isAuthenticated) return children;

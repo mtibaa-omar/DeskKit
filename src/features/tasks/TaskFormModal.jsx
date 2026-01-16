@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { ListTodo, Tag, Calendar, Flag } from "lucide-react";
 import Modal from "../../components/Modal";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
@@ -101,60 +102,100 @@ export default function TaskFormModal({
       isOpen={isOpen}
       onClose={onClose}
       title={isEditing ? "Edit Task" : "New Task"}
+      maxWidth="max-w-xl"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
-        <Input
-          label="Title"
-          placeholder="What needs to be done?"
-          error={errors.title?.message}
-          {...register("title", { required: "Title is required" })}
-        />
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Category
-          </label>
-          <Select
-            {...register("category_id")}
-            options={categoryOptions}
-            className="w-full"
+      <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <ListTodo className="w-4 h-4 text-blue-500" />
+            <span>Task Details</span>
+          </div>
+          <Input
+            placeholder="What needs to be done?"
+            error={errors.title?.message}
+            inputClassName="!py-3.5 !text-base !font-medium !rounded-xl"
+            {...register("title", { required: "Title is required" })}
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Start Date"
-            type="datetime-local"
-            {...register("planned_start")}
-          />
-          <Input
-            label="End Date"
-            type="datetime-local"
-            error={errors.planned_end?.message}
-            {...register("planned_end", {
-              validate: (value) => {
-                if (value && plannedStart && value < plannedStart) {
-                  return "End date must be after start date";
-                }
-                return true;
-              },
-            })}
-          />
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <Tag className="w-4 h-4 text-purple-500" />
+              <span>Category</span>
+            </div>
+            <Select
+              {...register("category_id")}
+              options={categoryOptions}
+              className="w-full !rounded-xl"
+            />
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <Flag className="w-4 h-4 text-amber-500" />
+              <span>Status</span>
+            </div>
+            <Select
+              {...register("status")}
+              options={STATUS_OPTIONS}
+              className="w-full !rounded-xl"
+            />
+          </div>
         </div>
 
-        <div>
-           <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Status
-          </label>
-          <Select
-            {...register("status")}
-            options={STATUS_OPTIONS}
-            className="w-full"
-          />
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+            <Calendar className="w-4 h-4 text-emerald-500" />
+            <span>Schedule</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">
+                Start Date
+              </label>
+              <input
+                type="datetime-local"
+                {...register("planned_start")}
+                className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 bg-white text-sm transition-colors"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">
+                End Date
+              </label>
+              <input
+                type="datetime-local"
+                {...register("planned_end", {
+                  validate: (value) => {
+                    if (value && plannedStart && value < plannedStart) {
+                      return "End date must be after start date";
+                    }
+                    return true;
+                  },
+                })}
+                className={`w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none bg-white text-sm transition-colors ${
+                  errors.planned_end
+                    ? "border-red-400 focus:border-red-500"
+                    : "border-gray-200 focus:border-blue-500"
+                }`}
+              />
+              {errors.planned_end && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.planned_end.message}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="flex gap-3 pt-4">
-          <Button type="button" variant="secondary" fullWidth onClick={onClose}>
+        <div className="flex gap-3 pt-2">
+          <Button
+            type="button"
+            variant="secondary"
+            fullWidth
+            onClick={onClose}
+            className="!rounded-xl"
+          >
             Cancel
           </Button>
           <Button
@@ -162,6 +203,7 @@ export default function TaskFormModal({
             variant="primary"
             fullWidth
             isLoading={isPending}
+            className="!rounded-xl shadow-lg shadow-blue-500/25"
           >
             {isEditing ? "Save Changes" : "Create Task"}
           </Button>

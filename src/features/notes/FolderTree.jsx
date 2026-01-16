@@ -1,7 +1,17 @@
 import { useState } from "react";
-import { Folder, FolderPlus, FileText } from "lucide-react";
-import { useFolders, useCreateFolder, useUpdateFolder, useDeleteFolder } from "./useFolders";
-import { useNotesByFolder, useCreateNote, useUpdateNote, useDeleteNote } from "./useNotes";
+import { Folder, FolderPlus, FileText, NotebookText } from "lucide-react";
+import {
+  useFolders,
+  useCreateFolder,
+  useUpdateFolder,
+  useDeleteFolder,
+} from "./useFolders";
+import {
+  useNotesByFolder,
+  useCreateNote,
+  useUpdateNote,
+  useDeleteNote,
+} from "./useNotes";
 import Confirm from "../../components/Confirm";
 import Spinner from "../../components/Spinner";
 import FolderItem from "./FolderItem";
@@ -272,11 +282,14 @@ export default function FolderTree({
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between px-3 py-3 border-b border-gray-100">
-        <h2 className="font-semibold text-gray-800">Folders</h2>
+      <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-2.5">
+          <NotebookText className="w-4.5 h-4.5 text-amber-600" />
+          <h2 className="font-bold text-gray-800">Folders</h2>
+        </div>
         <button
           onClick={() => startCreatingFolder(null)}
-          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-1.5 hover:bg-gray-100 rounded-xl transition-colors group"
           title="New Root Folder"
         >
           <FolderPlus className="w-4.5 h-4.5 text-gray-500" />
@@ -299,14 +312,19 @@ export default function FolderTree({
         )}
 
         {folders.length === 0 && !isCreatingFolder ? (
-          <div className="text-center py-8 text-gray-400 text-sm">
-            <Folder className="w-10 h-10 mx-auto mb-2 text-gray-300" />
-            <p>No folders yet</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+              <Folder className="w-8 h-8 text-gray-300" />
+            </div>
+            <p className="text-gray-500 font-medium mb-1">No folders yet</p>
+            <p className="text-gray-400 text-sm mb-4">
+              Create a folder to organize your notes
+            </p>
             <button
               onClick={() => setIsCreatingFolder(true)}
               className="mt-2 text-blue-500 hover:underline text-sm"
             >
-              Create your first folder
+              + Create your first folder
             </button>
           </div>
         ) : (

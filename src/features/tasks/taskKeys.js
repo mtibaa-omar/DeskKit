@@ -3,4 +3,5 @@ export const taskKeys = {
   categories: (userId) => ["tasks", "categories", userId],
   list: (userId, filters = {}) => ["tasks", "list", userId, filters],
   detail: (userId, taskId) => ["tasks", "detail", userId, taskId],
+  range: (userId, start, end) => ["tasks", "range", userId, start, end],
 };
