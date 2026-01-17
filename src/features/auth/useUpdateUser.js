@@ -5,7 +5,7 @@ import { authKeys } from "./authKeys";
 
 export function useUpdateUser() {
   const queryClient = useQueryClient();
-  const { isLoading: isUpdating, mutate: updateUser } = useMutation({
+  const { isPending: isUpdating, mutate: updateUser } = useMutation({
     mutationFn: authAPI.updateCurrentUser,
     onSuccess: () => {
       toast.success("User data Successfully updated");
