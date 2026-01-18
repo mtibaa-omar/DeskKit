@@ -8,7 +8,7 @@ import "./styles/index.css";
 import AppLayout from "./components/AppLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PageNotFound from "./components/PageNotFound";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import ConfirmEmailPage from "./pages/ConfirmEmailPage";
@@ -59,7 +59,7 @@ export default function App() {
         <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-            <Route index element={<Home />} />
+            <Route index element={<Dashboard />} />
             <Route path="account" element={<ProfilePage />} />
             <Route path="workspace">
               <Route path="pomodoro" element={<PomodoroPage />} />
