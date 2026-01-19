@@ -16,6 +16,7 @@ import {
 
 import StatCard from "../features/dashboard/StatCard";
 import Spinner from "../components/Spinner";
+import FocusTimeChart from "../components/FocusTimeChart";
 
 export default function Dashboard() {
   const [timeFilter, setTimeFilter] = useState(7);
@@ -115,6 +116,13 @@ export default function Dashboard() {
             icon={Layout}
             color="orange"
             loading={whiteboardLoading}
+          />
+        </div>
+        <div>
+          <FocusTimeChart
+            data={pomodoroStats?.dailyData}
+            loading={pomodoroLoading}
+            title={`Focus Time from ${dateRange.start} to ${dateRange.end}`}
           />
         </div>
       </div>
