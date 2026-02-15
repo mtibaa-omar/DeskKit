@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { ListTodo, Tag, Calendar, Flag } from "lucide-react";
 import Modal from "../../components/Modal";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
@@ -13,6 +12,13 @@ const STATUS_OPTIONS = [
   { value: "active", label: "Active" },
   { value: "done", label: "Done" },
   { value: "canceled", label: "Canceled" },
+];
+
+const RECURRENCE_OPTIONS = [
+  { value: "", label: "No repeat" },
+  { value: "daily", label: "Daily" },
+  { value: "weekdays", label: "Weekdays" },
+  { value: "weekly", label: "Weekly" },
 ];
 
 export default function TaskFormModal({
@@ -41,30 +47,31 @@ export default function TaskFormModal({
       planned_start: "",
       planned_end: "",
       status: "todo",
+      recurrence: "",
     },
   });
 
   useEffect(() => {
     if (isOpen) {
-      if (task) {
-        reset({
-          title: task.title || "",
-          category_id: task.category_id || "",
-          planned_start: task.planned_start
-            ? task.planned_start.slice(0, 16)
-            : "",
-          planned_end: task.planned_end ? task.planned_end.slice(0, 16) : "",
-          status: task.status || "todo",
-        });
-      } else {
-        reset({
-          title: "",
-          category_id: "",
-          planned_start: "",
-          planned_end: "",
-          status: "todo",
-        });
-      }
+      reset(
+        task
+          ? {
+              title: task.title || "",
+              category_id: task.category_id || "",
+              planned_start: task.planned_start?.slice(0, 16) || "",
+              planned_end: task.planned_end?.slice(0, 16) || "",
+              status: task.status || "todo",
+              recurrence: task.recurrence || "",
+            }
+          : {
+              title: "",
+              category_id: "",
+              planned_start: "",
+              planned_end: "",
+              status: "todo",
+              recurrence: "",
+            }
+      );
     }
   }, [isOpen, task, reset]);
 
@@ -77,24 +84,25 @@ export default function TaskFormModal({
       planned_start: data.planned_start || null,
       planned_end: data.planned_end || null,
       status: data.status,
+      recurrence: data.recurrence || null,
     };
 
-    if (isEditing) {
-      updateMutation.mutate(
-        { id: task.id, ...payload },
-        { onSuccess: () => onClose() }
-      );
-    } else {
-      createMutation.mutate(payload, { onSuccess: () => onClose() });
+    const opts = { onSuccess: () => onClose() };
+    isEditing
+      ? updateMutation.mutate({ id: task.id, ...payload }, opts)
+      : createMutation.mutate(payload, opts);
+  };
+
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      handleSubmit(onSubmit)();
     }
   };
 
   const categoryOptions = [
     { value: "", label: "None" },
-    ...categories.map((cat) => ({
-      value: cat.id,
-      label: cat.name,
-    })),
+    ...categories.map((c) => ({ value: c.id, label: c.name })),
   ];
 
   return (
@@ -102,99 +110,79 @@ export default function TaskFormModal({
       isOpen={isOpen}
       onClose={onClose}
       title={isEditing ? "Edit Task" : "New Task"}
-      maxWidth="max-w-xl"
+      maxWidth="max-w-lg"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <ListTodo className="w-4 h-4 text-blue-500" />
-            <span>Task Details</span>
-          </div>
-          <Input
-            placeholder="What needs to be done?"
-            error={errors.title?.message}
-            inputClassName="!py-3.5 !text-base !font-medium !rounded-xl"
-            {...register("title", { required: "Title is required" })}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        onKeyDown={handleKeyDown}
+        className="p-4 sm:p-5 space-y-4"
+      >
+        <Input
+          placeholder="Task name"
+          error={errors.title?.message}
+          inputClassName="!py-3 sm:!py-2.5 !text-sm !rounded-lg"
+          {...register("title", { required: "Title is required" })}
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Select
+            {...register("category_id")}
+            options={categoryOptions}
+            className="!py-2.5 sm:!py-2 !text-sm !rounded-lg !border-gray-200"
+          />
+          <Select
+            {...register("status")}
+            options={STATUS_OPTIONS}
+            className="!py-2.5 sm:!py-2 !text-sm !rounded-lg !border-gray-200"
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <Tag className="w-4 h-4 text-purple-500" />
-              <span>Category</span>
-            </div>
-            <Select
-              {...register("category_id")}
-              options={categoryOptions}
-              className="w-full !rounded-xl"
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+              Start
+            </label>
+            <input
+              type="datetime-local"
+              {...register("planned_start")}
+              className="w-full px-3 py-2.5 sm:py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-blue-400 transition-colors"
             />
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <Flag className="w-4 h-4 text-amber-500" />
-              <span>Status</span>
-            </div>
-            <Select
-              {...register("status")}
-              options={STATUS_OPTIONS}
-              className="w-full !rounded-xl"
+          <div>
+            <label className="block text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+              End
+            </label>
+            <input
+              type="datetime-local"
+              {...register("planned_end", {
+                validate: (v) =>
+                  !v || !plannedStart || v >= plannedStart || "Must be after start",
+              })}
+              className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg text-sm focus:outline-none transition-colors ${
+                errors.planned_end
+                  ? "border-red-300 focus:border-red-400"
+                  : "border-gray-200 focus:border-blue-400"
+              }`}
             />
+            {errors.planned_end && (
+              <p className="text-red-500 text-xs mt-1">{errors.planned_end.message}</p>
+            )}
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <Calendar className="w-4 h-4 text-emerald-500" />
-            <span>Schedule</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">
-                Start Date
-              </label>
-              <input
-                type="datetime-local"
-                {...register("planned_start")}
-                className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 bg-white text-sm transition-colors"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">
-                End Date
-              </label>
-              <input
-                type="datetime-local"
-                {...register("planned_end", {
-                  validate: (value) => {
-                    if (value && plannedStart && value < plannedStart) {
-                      return "End date must be after start date";
-                    }
-                    return true;
-                  },
-                })}
-                className={`w-full px-3 py-2.5 border-2 rounded-lg focus:outline-none bg-white text-sm transition-colors ${
-                  errors.planned_end
-                    ? "border-red-400 focus:border-red-500"
-                    : "border-gray-200 focus:border-blue-500"
-                }`}
-              />
-              {errors.planned_end && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.planned_end.message}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+        <Select
+          {...register("recurrence")}
+          options={RECURRENCE_OPTIONS}
+          className="w-full !py-2.5 sm:!py-2 !text-sm !rounded-lg !border-gray-200"
+        />
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex gap-2.5 pt-3">
           <Button
             type="button"
             variant="secondary"
             fullWidth
             onClick={onClose}
-            className="!rounded-xl"
+            className="!rounded-lg"
           >
             Cancel
           </Button>
@@ -203,9 +191,9 @@ export default function TaskFormModal({
             variant="primary"
             fullWidth
             isLoading={isPending}
-            className="!rounded-xl shadow-lg shadow-blue-500/25"
+            className="!rounded-lg"
           >
-            {isEditing ? "Save Changes" : "Create Task"}
+            {isEditing ? "Save" : "Create"}
           </Button>
         </div>
       </form>

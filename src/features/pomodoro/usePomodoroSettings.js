@@ -21,6 +21,7 @@ export function usePomodoroSettings() {
       auto_start_focus: false,
       sound_enabled: true,
       sound_volume: 0.7,
+      ambient_sound: "none",
     },
     isLoading,
   };
@@ -35,7 +36,6 @@ export function useUpdatePomodoroSettings() {
       pomodoroAPI.upsertSettings({ userId: user?.id, ...settings }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: pomodoroKeys.settings });
-      toast.success("Settings saved!");
     },
     onError: (err) => {
       toast.error(err.message || "Failed to save settings");

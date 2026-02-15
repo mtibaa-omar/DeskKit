@@ -7,6 +7,7 @@ import Confirm from "../../components/Confirm";
 import Input from "../../components/Input";
 import ButtonIcon from "../../components/ButtonIcon";
 import { useTaskCategories } from "./useTaskCategories";
+import { useTasks } from "./useTasks";
 
 export default function CategoryManagerModal({ isOpen, onClose, userId }) {
   const {
@@ -20,22 +21,25 @@ export default function CategoryManagerModal({ isOpen, onClose, userId }) {
     isDeleting,
   } = useTaskCategories(userId);
 
+  const { tasks } = useTasks(userId, {});
+
   const [editingId, setEditingId] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, categoryId: null, categoryName: "" });
+  const [deleteConfirm, setDeleteConfirm] = useState({
+    isOpen: false,
+    id: null,
+    name: "",
+  });
 
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
-
-  const {
-    register: registerEdit,
-    handleSubmit: handleSubmitEdit,
+    register: regEdit,
+    handleSubmit: submitEdit,
     reset: resetEdit,
-    setValue: setEditValue,
+    setValue,
   } = useForm();
+
+  const countTasks = (catId) =>
+    tasks?.filter((t) => t.category_id === catId).length || 0;
 
   const onCreateSubmit = (data) => {
     createCategory(data.name);
@@ -50,52 +54,23 @@ export default function CategoryManagerModal({ isOpen, onClose, userId }) {
     }
   };
 
-  const startEdit = (category) => {
-    setEditingId(category.id);
-    setEditValue("editName", category.name);
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    resetEdit();
-  };
-
-  const openDeleteConfirm = (category) => {
-    setDeleteConfirm({ isOpen: true, categoryId: category.id, categoryName: category.name });
-  };
-
-  const closeDeleteConfirm = () => {
-    setDeleteConfirm({ isOpen: false, categoryId: null, categoryName: "" });
-  };
-
-  const handleDeleteConfirm = () => {
-    if (deleteConfirm.categoryId) {
-      deleteCategory(deleteConfirm.categoryId);
-      closeDeleteConfirm();
-    }
-  };
-
   return (
     <>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title="Manage Categories"
-        maxWidth="max-w-md"
+        title="Categories"
+        maxWidth="max-w-md sm:max-w-sm"
       >
-        <div className="p-6">
-          <form
-            onSubmit={handleSubmit(onCreateSubmit)}
-            className="flex gap-2 mb-6"
-          >
+        <div className="p-4 sm:p-5">
+          <form onSubmit={handleSubmit(onCreateSubmit)} className="flex gap-2.5 mb-5">
             <div className="flex-1">
-                <Input
-                  {...register("name", { required: "Name is required" })}
-                  placeholder="New category name"
-                  error={errors.name?.message}
-                  inputClassName="!py-2.5 !rounded-xl"
-                  icon={Tag}
-                />
+              <Input
+                {...register("name", { required: "Required" })}
+                placeholder="New category"
+                error={errors.name?.message}
+                inputClassName="!py-2.5 sm:!py-2 !text-sm !rounded-lg"
+              />
             </div>
             <Button
               type="submit"
@@ -103,117 +78,100 @@ export default function CategoryManagerModal({ isOpen, onClose, userId }) {
               size="md"
               icon={Plus}
               isLoading={isCreating}
-              className="!rounded-xl shrink-0"
+              className="!rounded-lg shrink-0"
             >
               Add
             </Button>
           </form>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-              <div className="w-8 h-8 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin mb-3" />
-              <span className="text-sm">Loading categories...</span>
+            <div className="flex justify-center py-10">
+              <div className="w-6 h-6 border-2 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
             </div>
           ) : categories.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
-                <FolderOpen className="w-8 h-8 text-gray-400" />
-              </div>
-              <h4 className="font-semibold text-gray-700 mb-1">
-                No categories yet
-              </h4>
-              <p className="text-sm text-gray-500">
-                Create your first category above to organize your tasks.
-              </p>
+            <div className="flex flex-col items-center py-10 text-center">
+              <FolderOpen className="w-8 h-8 text-gray-300 mb-3" />
+              <p className="text-sm text-gray-400">No categories yet</p>
             </div>
           ) : (
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                Your Categories ({categories.length})
-              </div>
-              <ul className="space-y-2">
-                {categories.map((category) => (
-                  <li
-                    key={category.id}
-                    className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors group"
-                  >
-                    {editingId === category.id ? (
-                      <form
-                        onSubmit={handleSubmitEdit(onEditSubmit)}
-                        className="flex-1 flex gap-2 items-center"
-                      >
-                        <div className="flex-1">
-                          <Input
-                            {...registerEdit("editName", {
-                              required: "Name is required",
-                            })}
-                            inputClassName="!py-2 text-sm !rounded-lg"
-                            autoFocus
-                          />
-                        </div>
+            <ul className="space-y-1">
+              {categories.map((cat) => (
+                <li
+                  key={cat.id}
+                  className="flex items-center gap-3 px-3 py-3 sm:py-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+                >
+                  {editingId === cat.id ? (
+                    <form
+                      onSubmit={submitEdit(onEditSubmit)}
+                      className="flex-1 flex gap-1.5 items-center"
+                    >
+                      <div className="flex-1">
+                        <Input
+                          {...regEdit("editName", { required: true })}
+                          inputClassName="!py-1.5 !text-sm !rounded-md"
+                          autoFocus
+                        />
+                      </div>
+                      <ButtonIcon
+                        type="submit"
+                        icon={Check}
+                        variant="success"
+                        size="sm"
+                        isLoading={isUpdating}
+                      />
+                      <ButtonIcon
+                        type="button"
+                        icon={X}
+                        variant="ghost-danger"
+                        size="sm"
+                        onClick={() => { setEditingId(null); resetEdit(); }}
+                      />
+                    </form>
+                  ) : (
+                    <>
+                      <Tag className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-gray-400 shrink-0" />
+                      <span className="flex-1 text-sm text-gray-700 truncate">
+                        {cat.name}
+                      </span>
+                      <span className="text-xs sm:text-[11px] font-medium text-gray-400 tabular-nums">
+                        {countTasks(cat.id)}
+                      </span>
+                      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <ButtonIcon
-                          type="submit"
-                          icon={Check}
-                          variant="success"
+                          icon={Pencil}
+                          variant="ghost"
                           size="sm"
-                          isLoading={isUpdating}
-                          title="Save"
+                          onClick={() => { setEditingId(cat.id); setValue("editName", cat.name); }}
                         />
                         <ButtonIcon
-                          type="button"
-                          icon={X}
+                          icon={Trash2}
                           variant="ghost-danger"
                           size="sm"
-                          onClick={cancelEdit}
-                          title="Cancel"
+                          onClick={() => setDeleteConfirm({ isOpen: true, id: cat.id, name: cat.name })}
+                          disabled={isDeleting}
                         />
-                      </form>
-                    ) : (
-                      <>
-                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-gray-200 shadow-sm">
-                          <Tag className="w-4 h-4 text-gray-500" />
-                        </div>
-                        <span className="flex-1 font-medium text-gray-700">
-                          {category.name}
-                        </span>
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <ButtonIcon
-                            icon={Pencil}
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => startEdit(category)}
-                            title="Edit"
-                          />
-                          <ButtonIcon
-                            icon={Trash2}
-                            variant="ghost-danger"
-                            size="sm"
-                            onClick={() => openDeleteConfirm(category)}
-                            disabled={isDeleting}
-                            title="Delete"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                      </div>
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </Modal>
 
       <Confirm
         isOpen={deleteConfirm.isOpen}
-        onClose={closeDeleteConfirm}
-        onConfirm={handleDeleteConfirm}
+        onClose={() => setDeleteConfirm({ isOpen: false, id: null, name: "" })}
+        onConfirm={() => {
+          if (deleteConfirm.id) deleteCategory(deleteConfirm.id);
+          setDeleteConfirm({ isOpen: false, id: null, name: "" });
+        }}
         isLoading={isDeleting}
         variant="delete"
         title="Delete Category"
-        message={`Are you sure you want to delete "${deleteConfirm.categoryName}"? This action cannot be undone.`}
+        message={`Delete "${deleteConfirm.name}"?`}
         confirmText="Delete"
-        cancelText="Cancel"
-        loadingText="Deleting..."
       />
     </>
   );

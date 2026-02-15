@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { pomodoroAPI } from "../../services/api/apiPomodoro";
 import { pomodoroKeys } from "./pomodoroKeys";
+import { taskKeys } from "../tasks/taskKeys";
 import { usePomodoroSettings } from "./usePomodoroSettings";
 
 export function usePomodoroRun(userId) {
@@ -23,6 +24,7 @@ export function usePomodoroRun(userId) {
     mutationFn: pomodoroAPI.startRun,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: pomodoroKeys.run(userId) });
+      queryClient.invalidateQueries({ queryKey: taskKeys.all });
     },
     onError: (err) => {
       toast.error(err.message || "Failed to start timer");

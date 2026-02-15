@@ -43,6 +43,20 @@ export const pomodoroAPI = {
     return data || [];
   },
 
+  getSessionsByRange: async (userId, start, end) => {
+    const { data, error } = await supabase
+      .from("pomodoro_sessions")
+      .select("*, tasks(id, title)")
+      .eq("user_id", userId)
+      .eq("phase", "focus") 
+      .gte("started_at", start)
+      .lt("started_at", end)
+      .order("started_at", { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return data || [];
+  },
+
   createSession: async ({
     userId,
     phase,
@@ -105,6 +119,20 @@ export const pomodoroAPI = {
       .single();
 
     if (error) throw new Error(error.message);
+
+
+    if (taskId) {
+      await supabase
+        .from("tasks")
+        .update({ 
+          status: "active", 
+          updated_at: now.toISOString() 
+        })
+        .eq("id", taskId)
+        .eq("user_id", userId)
+        .eq("status", "todo"); 
+    }
+
     return data;
   },
 

@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import Spinner from "./Spinner";
+import Spinner from "../../components/Spinner";
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {

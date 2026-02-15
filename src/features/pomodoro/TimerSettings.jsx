@@ -98,7 +98,7 @@ export function TimerSettings({
       <button
         onClick={() => setIsOpen(true)}
         disabled={disabled}
-        className="group flex items-center gap-2 px-5 py-2.5 bg-white/70 hover:bg-white/90 backdrop-blur-md rounded-xl border border-gray-200 shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="group flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-4 sm:py-2.5 bg-white/70 hover:bg-white/90 backdrop-blur-md rounded-xl border border-gray-200 shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-amber-600" />

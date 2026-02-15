@@ -59,16 +59,14 @@ export default function App() {
         <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="account" element={<ProfilePage />} />
-            <Route path="workspace">
-              <Route path="pomodoro" element={<PomodoroPage />} />
-              <Route path="tasks" element={<TasksPage />} />
-              <Route path="notes" element={<NotesPage />} />
-              <Route path="calendar" element={<CalendarPage />} />
-              <Route path="whiteboard" element={<WhiteboardsPage />} />
-              <Route path="whiteboard/:id" element={<WhiteboardEditorPage />} />
-            </Route>
+            <Route path="pomodoro" element={<PomodoroPage />} />
+            <Route path="tasks" element={<TasksPage />} />
+            <Route path="notes" element={<NotesPage />} />
+            <Route path="calendar" element={<CalendarPage />} />
+            <Route path="whiteboard" element={<WhiteboardsPage />} />
+            <Route path="whiteboard/:id" element={<WhiteboardEditorPage />} />
             <Route path="*" element={<PageNotFound />} />
           </Route>
           <Route path="signup" element={<SignupPage />} />

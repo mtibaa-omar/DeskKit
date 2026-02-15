@@ -83,3 +83,17 @@ export function useTasksByRange(userId, start, end) {
     enabled: !!userId && !!start && !!end,
   });
 }
+
+export function useReorderTasks(userId) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (taskOrders) => tasksAPI.reorderTasks({ userId, taskOrders }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: taskKeys.all });
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to reorder tasks");
+    },
+  });
+}

@@ -24,16 +24,16 @@ export default function SimpleTimer({
 
   const colors = {
     focus: {
-      ring: "#18181b",
-      ringBg: "#f4f4f5",
-      text: "#18181b",
-      dot: "#27272a",
+      ring: "#4f46e5",
+      ringBg: "#e0e7ff",
+      text: "#312e81",
+      dot: "#6366f1",
     },
     break: {
-      ring: "#2563eb",
-      ringBg: "#eff6ff",
-      text: "#1e40af",
-      dot: "#3b82f6",
+      ring: "#10b981",
+      ringBg: "#d1fae5",
+      text: "#065f46",
+      dot: "#34d399",
     },
   };
 
@@ -42,9 +42,7 @@ export default function SimpleTimer({
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="relative">
-        {/* Circular Progress */}
         <svg width="260" height="260" className="transform -rotate-90">
-          {/* Background circle */}
           <circle
             cx="130"
             cy="130"
@@ -53,7 +51,6 @@ export default function SimpleTimer({
             stroke={c.ringBg}
             strokeWidth="5"
           />
-          {/* Progress circle */}
           <motion.circle
             cx="130"
             cy="130"
@@ -68,7 +65,6 @@ export default function SimpleTimer({
           />
         </svg>
 
-        {/* Time Display - centered in circle */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div
             className="text-6xl font-medium tabular-nums tracking-tight"
@@ -79,7 +75,6 @@ export default function SimpleTimer({
             {String(seconds).padStart(2, "0")}
           </div>
 
-          {/* Status indicator */}
           <div className="mt-3 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/40 backdrop-blur-sm border border-black/5">
             <span
               className={`w-1.5 h-1.5 rounded-full`}

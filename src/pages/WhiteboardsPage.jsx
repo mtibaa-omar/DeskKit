@@ -107,7 +107,7 @@ export default function WhiteboardsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50/30">
-      <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 pb-8 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
           <div className="space-y-1">
             <div className="flex items-center gap-3">

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Home, FileText, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Home, FileText, X, ChevronLeft, ChevronRight, ClipboardList, NotebookPen, CalendarDays, Presentation, Hourglass } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import SidebarItem from "./SidebarItem";
 import SidebarDropdown from "./SidebarDropdown";
@@ -7,18 +7,11 @@ import UserSection from "../features/auth/UserSection";
 
 const NAV_ITEMS = [
   { path: "/dashboard", label: "Dashboard", icon: Home },
-  {
-    label: "Workspace",
-    icon: FileText,
-    path: "/Workspace",
-    children: [
-      { path: "/workspace/pomodoro", label: "Pomodoro" },
-      { path: "/workspace/tasks", label: "Tasks" },
-      { path: "/workspace/notes", label: "Notes" },
-      { path: "/workspace/calendar", label: "Calendar" },
-      { path: "/workspace/whiteboard", label: "Whiteboard" },
-    ],
-  },
+  { path: "/pomodoro", label: "Pomodoro", icon: Hourglass },
+  { path: "/tasks", label: "Tasks", icon: ClipboardList },
+  { path: "/notes", label: "Notes", icon: NotebookPen },
+  { path: "/calendar", label: "Calendar", icon: CalendarDays  },
+  { path: "/whiteboard", label: "Whiteboard", icon: Presentation },
 ];
 
 export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {

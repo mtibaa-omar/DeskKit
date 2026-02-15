@@ -16,7 +16,8 @@ import {
 
 import StatCard from "../features/dashboard/StatCard";
 import Spinner from "../components/Spinner";
-import FocusTimeChart from "../components/FocusTimeChart";
+import FocusTimeChart from "../features/dashboard/FocusTimeChart";
+import TaskTrendChart from "../features/dashboard/TaskTrendChart";
 
 export default function Dashboard() {
   const [timeFilter, setTimeFilter] = useState(7);
@@ -46,7 +47,7 @@ export default function Dashboard() {
 
   const dateRange = getDateRange();
   return (
-    <div className="min-h-screen bg-gray-50/50 p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-50/50 px-4 md:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -123,6 +124,14 @@ export default function Dashboard() {
             data={pomodoroStats?.dailyData}
             loading={pomodoroLoading}
             title={`Focus Time from ${dateRange.start} to ${dateRange.end}`}
+          />
+        </div>
+
+        <div>
+          <TaskTrendChart
+            data={taskStats?.dailyData}
+            loading={taskStatsLoading}
+            title={`Task Trend from ${dateRange.start} to ${dateRange.end}`}
           />
         </div>
       </div>

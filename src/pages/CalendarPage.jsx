@@ -1,10 +1,12 @@
 import { useState, useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useUser } from "../features/auth/useUser";
 import { useTasksByRange, useUpdateTask } from "../features/tasks/useTasks";
+import { pomodoroAPI } from "../services/api/apiPomodoro";
 import TaskFormModal from "../features/tasks/TaskFormModal";
 import Spinner from "../components/Spinner";
 import "../styles/calendar.css";
@@ -15,6 +17,8 @@ const STATUS_COLORS = {
   done: { bg: "#d1fae5", border: "#10b981", text: "#065f46" },      
   canceled: { bg: "#fee2e2", border: "#ef4444", text: "#991b1b" },  
 };
+
+const POMODORO_COLORS = { bg: "#ede9fe", border: "#8b5cf6", text: "#5b21b6" };
 
 export default function CalendarPage() {
   const { user } = useUser();
@@ -31,10 +35,16 @@ export default function CalendarPage() {
     dateRange.end
   );
 
+  const { data: sessions = [] } = useQuery({
+    queryKey: ["pomodoro", "sessions", "range", userId, dateRange.start, dateRange.end],
+    queryFn: () => pomodoroAPI.getSessionsByRange(userId, dateRange.start, dateRange.end),
+    enabled: !!userId && !!dateRange.start && !!dateRange.end,
+  });
+
   const updateTask = useUpdateTask(userId);
 
   const events = useMemo(() => {
-    return tasks
+    const taskEvents = tasks
       .filter((task) => task.planned_start)
       .map((task) => {
         const colors = STATUS_COLORS[task.status] || STATUS_COLORS.todo;
@@ -46,7 +56,7 @@ export default function CalendarPage() {
           backgroundColor: colors.bg,
           borderColor: colors.border,
           textColor: colors.text,
-          extendedProps: { task },
+          extendedProps: { task, type: "task" },
         };
         
         if (task.planned_end) {
@@ -58,7 +68,30 @@ export default function CalendarPage() {
         }
         return event;
       });
-  }, [tasks]);
+
+    const sessionEvents = sessions.map((session) => {
+      const durationMin = Math.round(session.duration_sec / 60);
+      const taskTitle = session.tasks?.title;
+      const title = taskTitle 
+        ? `${taskTitle} (${durationMin}m)` 
+        : `Focus (${durationMin}m)`;
+
+      return {
+        id: `session-${session.id}`,
+        title,
+        start: session.started_at,
+        end: session.ended_at,
+        allDay: false,
+        backgroundColor: POMODORO_COLORS.bg,
+        borderColor: POMODORO_COLORS.border,
+        textColor: POMODORO_COLORS.text,
+        editable: false, 
+        extendedProps: { session, type: "session" },
+      };
+    });
+
+    return [...taskEvents, ...sessionEvents];
+  }, [tasks, sessions]);
 
   const handleDatesSet = useCallback((arg) => {
     setDateRange({
@@ -68,6 +101,8 @@ export default function CalendarPage() {
   }, []);
 
   const handleEventClick = useCallback((info) => {
+    if (info.event.extendedProps.type === "session") return;
+    
     const task = info.event.extendedProps.task;
     setEditingTask(task);
     setPrefillDate(null);
@@ -134,7 +169,7 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-gray-50/30">
-      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6">
+      <div className="max-w-7xl mx-auto px-4 pb-8 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Calendar</h1>
@@ -190,6 +225,13 @@ export default function CalendarPage() {
               <span className="text-sm text-gray-600 capitalize">{status}</span>
             </div>
           ))}
+          <div className="flex items-center gap-2">
+            <div
+              className="w-3 h-3 rounded-full border-2"
+              style={{ backgroundColor: POMODORO_COLORS.bg, borderColor: POMODORO_COLORS.border }}
+            />
+            <span className="text-sm text-gray-600">Focus Session</span>
+          </div>
         </div>
       </div>
 

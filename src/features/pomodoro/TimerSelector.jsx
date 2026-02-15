@@ -34,10 +34,11 @@ export function TimerSelector({
   disabled = false,
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 sm:gap-2">
       {timerTypes.map((timer) => {
         return (
           <TimerSelectorButton
+            key={timer.id}
             id={timer.id}
             name={timer.name}
             icon={timer.icon}

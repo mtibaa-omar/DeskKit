@@ -19,7 +19,7 @@ export default function TimerSelectorButton({
       key={id}
       onClick={() => !disabled && onSelectTimer(id)}
       disabled={disabled}
-      className={`relative p-3.5 rounded-2xl transition-all duration-300
+      className={`relative p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all duration-300
                 ${
                   isSelected
                     ? "bg-white/90 backdrop-blur-xl shadow-xl border-2 border-white/60"
@@ -33,7 +33,7 @@ export default function TimerSelectorButton({
       title={name}
     >
       <Icon
-        className={`w-5 h-5 transition-transform duration-200 ${
+        className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${
           isSelected ? "scale-110" : ""
         }`}
         color={colors.icon}

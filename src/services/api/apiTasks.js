@@ -97,6 +97,7 @@ export const tasksAPI = {
     }
 
     query = query
+      .order("sort_order", { ascending: true })
       .order("planned_start", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false });
 
@@ -138,6 +139,7 @@ export const tasksAPI = {
     planned_start = null,
     planned_end = null,
     status = "todo",
+    recurrence = null,
   }) => {
     const { data, error } = await supabase
       .from("tasks")
@@ -148,6 +150,7 @@ export const tasksAPI = {
         planned_start,
         planned_end,
         status,
+        recurrence,
       })
       .select("*, category:task_categories(id, name)")
       .single();
@@ -167,6 +170,7 @@ export const tasksAPI = {
     if (updates.planned_end !== undefined)
       patchData.planned_end = updates.planned_end;
     if (updates.status !== undefined) patchData.status = updates.status;
+    if (updates.recurrence !== undefined) patchData.recurrence = updates.recurrence;
 
     const { data, error } = await supabase
       .from("tasks")
@@ -188,6 +192,23 @@ export const tasksAPI = {
       .eq("user_id", userId);
 
     if (error) throw new Error(error.message);
+    return { success: true };
+  },
+
+  reorderTasks: async ({ userId, taskOrders }) => {
+    const updates = taskOrders.map(({ id, sort_order }) =>
+      supabase
+        .from("tasks")
+        .update({ sort_order, updated_at: new Date().toISOString() })
+        .eq("id", id)
+        .eq("user_id", userId)
+    );
+
+    const results = await Promise.all(updates);
+    const errors = results.filter((r) => r.error);
+    if (errors.length > 0) {
+      throw new Error("Failed to reorder tasks");
+    }
     return { success: true };
   },
 };
